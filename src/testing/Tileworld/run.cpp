@@ -9,14 +9,14 @@ const int end_time = 100;
 int main(int argc, char **argv) {
   spdlog::set_level(spdlog::level::debug);
   Simulation sim = Simulation();
-//  sim.Construct(1, 2, 0, 10000);
-  sim.Construct(7, 8, 0, end_time);
+  sim.Construct(1, 2, 0, end_time);
+//  sim.Construct(7, 8, 0, end_time);
 
   spdlog::info("MPI process up, rank {0}, size {1}", sim.rank(), sim.size());
   sim
-//      .attach_alp_to_clp(1, 0)
-//      .attach_alp_to_clp(2, 0)
-      .attach_alp_to_clp(7, 3)
+      .attach_alp_to_clp(1, 0)
+      .attach_alp_to_clp(2, 0)
+/*      .attach_alp_to_clp(7, 3)
       .attach_alp_to_clp(8, 3)
       .attach_alp_to_clp(9, 4)
       .attach_alp_to_clp(10, 4)
@@ -24,7 +24,12 @@ int main(int argc, char **argv) {
       .attach_alp_to_clp(12, 5)
       .attach_alp_to_clp(13, 6)
       .attach_alp_to_clp(14, 6)
-
+*/
+      .preload_variable(10101, Point(0, 0), 0)
+      .preload_variable(10102, Point(1, 0), 0)
+      .preload_variable(10201, Point(2, 0), 0)
+      .preload_variable(10202, Point(3, 0), 0)
+/*
       .preload_variable(10701, Point(0, 0), 0)
       .preload_variable(10702, Point(1, 0), 0)
       .preload_variable(10801, Point(2, 0), 0)
@@ -41,12 +46,13 @@ int main(int argc, char **argv) {
       .preload_variable(11302, Point(0, 6), 0)
       .preload_variable(11401, Point(0, 7), 0)
       .preload_variable(11402, Point(0, 8), 0)
-      .preload_variable(34232, 100, 0)
-      .preload_variable(34234, 100, 0)
-      .preload_variable(34532, 100, 0)
-      .preload_variable(34732, 100, 0)
-      .preload_variable(34712, 100, 0)
-      .preload_variable(34832, 100, 0)
+*/
+      .preload_variable(34232, Point(1, 1), 0)
+      .preload_variable(34234, Point(1, 2), 0)
+      .preload_variable(34532, Point(1, 3), 0)
+      .preload_variable(34732, Point(1, 4), 0)
+      .preload_variable(34712, Point(1, 5), 0)
+      .preload_variable(34832, Point(1, 6), 0)
 
       .Initialise();
 

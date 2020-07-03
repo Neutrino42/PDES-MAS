@@ -9,13 +9,14 @@ using namespace pdesmas;
 int main(int argc, char **argv) {
   spdlog::set_level(spdlog::level::debug);
   Simulation sim = Simulation();
-//  sim.Construct(1, 2, 0, 10000);
-  sim.Construct(7, 8, 0, 10000);
+  sim.Construct(1, 2, 0, 10000);
+//  sim.Construct(7, 8, 0, 10000);
 
   spdlog::info("MPI process up, rank {0}, size {1}", sim.rank(), sim.size());
   sim
-//      .attach_alp_to_clp(1, 0)
-//      .attach_alp_to_clp(2, 0)
+      .attach_alp_to_clp(1, 0)
+      .attach_alp_to_clp(2, 0)
+/*
       .attach_alp_to_clp(7, 3)
       .attach_alp_to_clp(8, 3)
       .attach_alp_to_clp(9, 4)
@@ -42,6 +43,11 @@ int main(int argc, char **argv) {
       .preload_variable(11302, Point(0, 6), 0)
       .preload_variable(11401, Point(0, 7), 0)
       .preload_variable(11402, Point(0, 8), 0)
+*/
+      .preload_variable(10101, Point(0, 0), 0)
+      .preload_variable(10102, Point(1, 0), 0)
+      .preload_variable(10201, Point(2, 0), 0)
+      .preload_variable(10202, Point(3, 0), 0)
       .Initialise();
 
   spdlog::info("Initialized, rank {0}, is {1}", sim.rank(), sim.type());
@@ -52,6 +58,7 @@ int main(int argc, char **argv) {
     }
 
   }
+  spdlog::info("Agent added, rank {0}", sim.rank());
 
   sim.Run();
   spdlog::info("LP exit, rank {0}", sim.rank());

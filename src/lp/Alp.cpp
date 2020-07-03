@@ -154,7 +154,7 @@ void Alp::Send() {
   }
   ostringstream out;
   message->Serialise(out);
-  spdlog::debug("ALP send message: {}", out.str());
+  spdlog::debug("ALP {0}, send message, type {1}, content {2}", this->GetRank(), message->GetType(), out.str());
   fMPIInterface->Send(message);
 }
 
@@ -164,7 +164,7 @@ void Alp::Receive() {
   //spdlog::debug("Message arrived, rank {0}, type {1}", this->GetRank(), message->GetType());
   ostringstream out;
   message->Serialise(out);
-  spdlog::debug("ALP receive message: {}", out.str());
+  spdlog::debug("ALP {}, receive message: {}", this->GetRank(), out.str());
   fProcessMessageMutex.Lock();
   switch (message->GetType()) {
     case SINGLEREADRESPONSEMESSAGE: {
@@ -319,12 +319,12 @@ bool Alp::ProcessRollback(const RollbackMessage *pRollbackMessage) {
                   agent_id, GetAgentLvt(agent_id), rollback_message_timestamp);
     //exit(1);
   }
-  spdlog::debug("Process rollback!");
+  spdlog::debug("ALP {0}, Process rollback!", this->GetRank());
 
 
   // stop the agent
   agent->Abort();
-  spdlog::debug("Agent stopping");
+  spdlog::debug("Agent {0}, stopping", agent_id);
   // should have been stopped if not in final waiting stage
   // cancel flag need to be set before resetting semaphore
   SetCancelFlag(agent_id, true);
@@ -334,7 +334,7 @@ bool Alp::ProcessRollback(const RollbackMessage *pRollbackMessage) {
   //delete agent_response_map_[agent_id];
 
   agent->Join();
-  spdlog::debug("Agent stopped");
+  spdlog::debug("Agent {0}, stopped", agent_id);
   //agent_response_map_[agent_id] = nullptr;
   //spdlog::debug("agent_response_map_[{}] set to nullptr", agent_id);
 
@@ -445,9 +445,9 @@ bool Alp::ProcessRollback(const RollbackMessage *pRollbackMessage) {
   agent_response_map_[agent_id] = nullptr;
   agent_response_message_id_map_[agent_id] = 0;
   // restart agent
-  spdlog::debug("Agent restarting");
+  spdlog::debug("Agent {}, restarting", agent_id);
   agent->Restart();
-  spdlog::debug("Agent restarted");
+  spdlog::debug("Agent {}, restarted", agent_id);
   return true;
 }
 
@@ -511,7 +511,7 @@ void Alp::Initialise() {
 }
 
 void Alp::Finalise() {
-  spdlog::info("Entering ALP finalise");
+  spdlog::info("Entering ALP finalise, {0}", this->GetRank());
 
   for (auto a:managed_agents_) {
     a.second->Join(); // wait for all agents to exit

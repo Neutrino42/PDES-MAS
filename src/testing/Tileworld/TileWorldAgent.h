@@ -32,6 +32,8 @@ private:
 
   unsigned int kSenseRange;
   unsigned long kLocationSsvId;
+  unsigned int world_size_w;
+  unsigned int world_size_h;
 };
 
 

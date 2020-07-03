@@ -48,7 +48,7 @@ void Agent::Body() {
 }
 
 const SingleReadResponseMessage *Agent::SendReadMessageAndGetResponse(unsigned long pVariableId, unsigned long pTime) {
-  //spdlog::debug("Agent {} SendReadMessageAndGetResponse", this->agent_id());
+  spdlog::debug("Agent {0}, SendReadMessageAndGetResponse, relevant SSV {1}", this->agent_id(), pVariableId);
   //SetAgentReadLVT(pAgentId, pTime);
   SsvId ssvId(pVariableId);
   SingleReadMessage *singleReadMessage = new SingleReadMessage();
@@ -68,14 +68,14 @@ const SingleReadResponseMessage *Agent::SendReadMessageAndGetResponse(unsigned l
     while (1) { SyncPoint(); }
     exit(1);
   }
-  //spdlog::debug("Message get, agent {0}",agent_id_);
+  spdlog::debug("Agent {0}, Message get, from MPIrank {1}", agent_id_, ret->GetOrigin());
   return (const SingleReadResponseMessage *) ret;
 }
 
 template<typename T>
 const WriteResponseMessage *
 Agent::SendWriteMessageAndGetResponse(unsigned long pVariableId, T pValue, unsigned long pTime) {
-  //spdlog::debug("Agent {} SendWriteMessageAndGetResponse", this->agent_id());
+  spdlog::debug("Agent {0}, SendWriteMessageAndGetResponse, relevant SSV {1}", this->agent_id(), pVariableId);
   //SetAgentWriteLVT(pAgentId, pTime);
   SsvId ssvId(pVariableId);
   Value<T> *value = new Value<T>(pValue);
@@ -103,7 +103,7 @@ Agent::SendWriteMessageAndGetResponse(unsigned long pVariableId, T pValue, unsig
 
 const RangeQueryMessage *
 Agent::SendRangeQueryPointMessageAndGetResponse(unsigned long pTime, const Point pStartValue, const Point pEndValue) {
-  //spdlog::debug("Agent {} SendRangeQueryPointMessageAndGetResponse", this->agent_id());
+  spdlog::debug("Agent {0}, SendRangeQueryPointMessageAndGetResponse", this->agent_id());
   //SetAgentReadLVT(pAgentId, pTime);
   Range range(pStartValue, pEndValue);
   RangeQueryMessage *rangeQueryMessage = new RangeQueryMessage();
@@ -124,6 +124,7 @@ Agent::SendRangeQueryPointMessageAndGetResponse(unsigned long pTime, const Point
 }
 
 void Agent::SendGVTMessage() {
+  spdlog::debug("Agent {0}, SendGVTMessage", this->agent_id());
   GvtRequestMessage *gvtMessage = new GvtRequestMessage();
   gvtMessage->SetOrigin(attached_alp_->GetRank());
   gvtMessage->SetDestination(0);

@@ -26,7 +26,7 @@ void TestAgent::Cycle() {
   this->WritePoint(111, Point(random() % 10, random() % 10), this->GetLVT() + 1);
   double v = this->ReadDouble(1, this->GetLVT() + 1);
   spdlog::debug("Agent {0}, Agent LVT {1}, read {2}", this->agent_id(), this->GetLVT(), v);
-  if (this->agent_id() == 1103) {
+//  if (this->agent_id() == 10101) {
     double vv = (random() % 500) / 1000.0;
     bool ret = this->WriteDouble(1, vv, this->GetLVT() + 1);
     if (ret) {
@@ -36,7 +36,7 @@ void TestAgent::Cycle() {
       spdlog::warn("Agent {0}, Agent LVT {1}, write failed: {2} = {3}", this->agent_id(), this->GetLVT(), 1, vv);
 
     }
-  }
+//  }
 
   if (this->GetEndTime() - this->GetLVT() <= 1200) {
     this->time_wrap(this->GetEndTime() - this->GetLVT());

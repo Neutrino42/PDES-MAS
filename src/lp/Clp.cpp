@@ -90,7 +90,7 @@ void Clp::SetGvt(unsigned long pGVT) {
   // Set GVT
   fGVT = pGVT;
   // Remove write periods before GVT
-  spdlog::debug("Clp {}, SetGvt({}), remove write periods", GetRank(), fGVT);
+  spdlog::debug("CLP {}, SetGvt({}), remove write periods", GetRank(), fGVT);
   fSharedState.RemoveWritePeriods(fGVT);
 #ifdef RANGE_QUERIES
   // Clear range periods
@@ -174,6 +174,9 @@ void Clp::Send() {
       // Skip
       break;
   }
+  ostringstream out;
+  sendMessage->Serialise(out);
+  spdlog::debug("CLP {0}, send message, type {1}, content {2}", this->GetRank(), sendMessage->GetType(), out.str());
   fMPIInterface->Send(sendMessage);
 }
 
@@ -632,15 +635,16 @@ void Clp::ProcessMessage(const StateMigrationMessage *pStateMigrationMessage) {
     // Move on to the next SSV
     ++stateVariableMapIterator;
   }
+  spdlog::debug("CLP {0}, SV Migration completed, received from {1}", GetRank(), pStateMigrationMessage->GetOrigin());
 }
 
 void Clp::MigrateStateVariables(
     const map<Direction, list<SsvId> > &pMigrationMap) {
-  spdlog::debug("SV Migration!");
+  spdlog::debug("CLP {0}, SV Migration!", GetRank());
   int sm_count = 0;
   for (auto &i : pMigrationMap) {
     for (auto &i2:i.second) {
-      spdlog::debug("{0}, to {1}", i2.id(), i.first);
+      spdlog::debug("SV Migration, {0}, from CLP {1} to direction {2}", i2.id(), GetRank(), i.first);
     }
   }
   // Get the list of SSVs to migrate to which port
