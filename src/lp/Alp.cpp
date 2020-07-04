@@ -152,9 +152,8 @@ void Alp::Send() {
     // the message was removed because of a rollback.
     return;
   }
-  ostringstream out;
-  message->Serialise(out);
-  spdlog::debug("ALP {0}, send message, type {1}, content {2}", this->GetRank(), message->GetType(), out.str());
+
+  spdlog::warn("LOGMSG ALP {0}, send, type {1}, dest {2}", this->GetRank(), message->GetType(), message->GetDestination());
   fMPIInterface->Send(message);
 }
 
@@ -162,9 +161,6 @@ void Alp::Receive() {
   // Fetch received message from the receive queue
   AbstractMessage *message = fReceiveMessageQueue->DequeueMessage();
   //spdlog::debug("Message arrived, rank {0}, type {1}", this->GetRank(), message->GetType());
-  ostringstream out;
-  message->Serialise(out);
-  spdlog::debug("ALP {}, receive message: {}", this->GetRank(), out.str());
   fProcessMessageMutex.Lock();
   switch (message->GetType()) {
     case SINGLEREADRESPONSEMESSAGE: {
@@ -319,7 +315,7 @@ bool Alp::ProcessRollback(const RollbackMessage *pRollbackMessage) {
                   agent_id, GetAgentLvt(agent_id), rollback_message_timestamp);
     //exit(1);
   }
-  spdlog::debug("ALP {0}, Process rollback!", this->GetRank());
+  spdlog::warn("LOGRB ALP {0}, Process rollback!", this->GetRank());
 
 
   // stop the agent
@@ -354,7 +350,6 @@ bool Alp::ProcessRollback(const RollbackMessage *pRollbackMessage) {
 
   agent_lvt_map_[agent_id] = rollback_to_timestamp;
 
-  spdlog::debug("Agent {0} rollback to timestamp {1}", agent_id, rollback_to_timestamp);
 
   /*
    We first need to remove all those events with time stamp greater than

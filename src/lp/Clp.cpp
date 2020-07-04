@@ -174,9 +174,8 @@ void Clp::Send() {
       // Skip
       break;
   }
-  ostringstream out;
-  sendMessage->Serialise(out);
-  spdlog::debug("CLP {0}, send message, type {1}, content {2}", this->GetRank(), sendMessage->GetType(), out.str());
+
+  spdlog::warn("LOGMSG CLP {0}, send, type {1}, dest {2}", this->GetRank(), sendMessage->GetType(), sendMessage->GetDestination());
   fMPIInterface->Send(sendMessage);
 }
 
@@ -635,16 +634,16 @@ void Clp::ProcessMessage(const StateMigrationMessage *pStateMigrationMessage) {
     // Move on to the next SSV
     ++stateVariableMapIterator;
   }
-  spdlog::debug("CLP {0}, SV Migration completed, received from {1}", GetRank(), pStateMigrationMessage->GetOrigin());
+  spdlog::warn("LOGSM CLP {0}, SV Migration completed, received from {1}", GetRank(), pStateMigrationMessage->GetOrigin());
 }
 
 void Clp::MigrateStateVariables(
     const map<Direction, list<SsvId> > &pMigrationMap) {
-  spdlog::debug("CLP {0}, SV Migration!", GetRank());
+  spdlog::warn("LOGSM CLP {0}, SV Migration!", GetRank());
   int sm_count = 0;
   for (auto &i : pMigrationMap) {
     for (auto &i2:i.second) {
-      spdlog::debug("SV Migration, {0}, from CLP {1} to direction {2}", i2.id(), GetRank(), i.first);
+      spdlog::debug("LOGSM SV Migration, {0}, from CLP {1} to direction {2}", i2.id(), GetRank(), i.first);
     }
   }
   // Get the list of SSVs to migrate to which port
@@ -688,6 +687,7 @@ void Clp::MigrateStateVariables(
       sm_count += 1;
     }
     // Send load balancing load message
+    spdlog::warn("LOGSM SV Migration, from CLP {}, to {}", GetRank(), loadBalancingLoadMessage->GetDestination());
     loadBalancingLoadMessage->SendToLp(this);
     // Move on to next direction
     ++migrateSSVMapIterator;
