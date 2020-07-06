@@ -139,15 +139,15 @@ void TileWorldAgent::Cycle() {
     }
   } 
 
-  if (agent_id() == 10101) {
+//  if (agent_id() == 1010001) {
     // GVT initiator
-    if (this->GetLVT() > this->GetGVT() + 2000) {
+    if (this->GetLVT() > this->GetGVT() + 100) {
       this->SendGVTMessage();
       spdlog::debug("GVT {}", this->GetGVT());
 
 
     }
-  }
+//  }
   //this->Sleep(100);
 
   //spdlog::warn("Cycle end");
