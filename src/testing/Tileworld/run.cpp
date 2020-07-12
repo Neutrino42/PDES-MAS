@@ -8,17 +8,18 @@
 
 using namespace std;
 using namespace pdesmas;
-const int endTime = 1000;
+int endTime = 1000;
 
 int main(int argc, char **argv) {
-  spdlog::set_level(spdlog::level::info);
-  spdlog::set_pattern("%f %+");
+  spdlog::set_level(spdlog::level::debug);
+  spdlog::set_pattern("%f [%P] %+");
   Simulation sim = Simulation();
 
   uint64_t numAgents = std::atoll(argv[1]);
   uint64_t numMPI = std::atoll(argv[2]);
   int randSeed = std::atoi(argv[3]);
-  const int worldSize = sqrt(numAgents) * 16;
+  endTime = std::atoi(argv[4]);
+  const int worldSize = sqrt(numAgents) * 18;
   const uint64_t numTile = numAgents / 4;
   srand(randSeed * numMPI);
   
@@ -54,7 +55,7 @@ int main(int argc, char **argv) {
   srand(randSeed * numMPI + sim.rank());
   if (sim.type() == "ALP") {
     for (uint64_t i = 0; i < numAgents / numALP; ++i) {
-      TileWorldAgent *test = new TileWorldAgent(0, endTime, AGENT_ID(sim.rank(), i), worldSize, worldSize, 10);
+      TileWorldAgent *test = new TileWorldAgent(0, endTime, AGENT_ID(sim.rank(), i), worldSize, worldSize, 10, randSeed);
       sim.add_agent(test);
     }
 
