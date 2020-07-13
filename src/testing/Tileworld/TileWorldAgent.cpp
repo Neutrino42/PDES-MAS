@@ -24,18 +24,18 @@ static inline int GetFirstDigit(int number) {
 
 void TileWorldAgent::Cycle() {
   //spdlog::warn("Cycle begin");
-  spdlog::info("Agent {}, GVT {} LVT {} - {}", this->agent_id(), this->GetGVT(), this->GetLVT(), this->GetLVT()-this->GetGVT());
+  spdlog::info("Agent {}, GVT {} LVT {} - {}", this->agent_id(), this->GetGVT(), this->GetLVT(), (int) this->GetLVT() - (int) this->GetGVT());
   // if close to endtime, proceed only one timestamp per cycle and sync GVT to avoid LVT exceeding endtime.
-//  if (this->GetLVT() > GetEndTime() - 10) {
-//    this->SendGVTMessage();
-//    spdlog::info("Agent {}, GVT {} endtime {}", this->agent_id(), this->GetGVT(), GetEndTime());
+  if (this->GetLVT() > GetEndTime() - 10) {
+    this->SendGVTMessage();
+    //spdlog::info("Agent {}, GVT {} endtime {}", this->agent_id(), this->GetGVT(), GetEndTime());
 
-//    Point my_position = this->ReadPoint(this->agent_id(), this->GetLVT() + 1);
-//    int curr_x = my_position.GetX();
-//    int curr_y = my_position.GetY();
-//    spdlog::info("Agent {0}, ({1},{2}), LVT {3}", this->agent_id(), curr_x, curr_y, this->GetLVT());
-//    return;
-//  }
+    Point my_position = this->ReadPoint(this->agent_id(), this->GetLVT());
+    int curr_x = my_position.GetX();
+    int curr_y = my_position.GetY();
+    //spdlog::info("Agent {0}, ({1},{2}), LVT {3}", this->agent_id(), curr_x, curr_y, this->GetLVT());
+    return;
+  }
   // where am i?
   //spdlog::debug("Agent {0}, read {0}",this->agent_id());
   //Point my_position=Point(0,0);

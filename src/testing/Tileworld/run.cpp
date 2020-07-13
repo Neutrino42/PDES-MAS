@@ -2,7 +2,6 @@
 #include "TileWorldAgent.h"
 #include <iostream>
 #include "spdlog/spdlog.h"
-#include "spdlog/sinks/basic_file_sink.h" // support for basic file logging
 
 #define AGENT_ID(rank,i) (1000000 + (rank) * 10000 + 1 + (i))
 
@@ -19,6 +18,7 @@ int main(int argc, char **argv) {
   uint64_t numMPI = std::atoll(argv[2]);
   int randSeed = std::atoi(argv[3]);
   endTime = std::atoi(argv[4]);
+
   const int worldSize = sqrt(numAgents) * 18;
   const uint64_t numTile = numAgents / 4;
   srand(randSeed * numMPI);
@@ -33,6 +33,9 @@ int main(int argc, char **argv) {
   // attach alp to clp
   for (uint64_t i = numCLP; i < numMPI; ++i) {
     sim.attach_alp_to_clp(i, (i - 1) / 2);
+    if (sim.rank() == 0) {
+      spdlog::info("sim.attach_alp_to_clp({}, {})", i, (i - 1) / 2);
+    }
   }
 
   // preload variables about agent locations
@@ -41,11 +44,17 @@ int main(int argc, char **argv) {
       unsigned long agentId = AGENT_ID(i,j); // 1000000 + i * 10000 + 1 + j
       // e.g. 1000000 + 4*10000 + 1 + 1021 = 1041022 (1|04|1022)
       sim.preload_variable(agentId, Point(rand() % worldSize, rand() % worldSize), 0);
+      if (sim.rank() == 0) {
+        spdlog::info("sim.preload_variable({}, Point({}, {}), 0);", agentId, rand() % worldSize, rand() % worldSize);
+      }
     }
   }
   // preload variables about tile locations
   for (uint64_t i = 0; i < numTile; ++i) {
     sim.preload_variable(3000000 + i, Point(rand() % worldSize, rand() % worldSize), 0);
+    if (sim.rank() == 0) {
+      spdlog::info("sim.preload_variable({}, Point({}, {}), 0)", 3000000 + i, rand() % worldSize, rand() % worldSize);
+    }
   }
 
   sim.Initialise();
